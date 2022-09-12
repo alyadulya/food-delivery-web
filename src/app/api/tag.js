@@ -1,5 +1,6 @@
 import axios from "axios";
+import { config } from "../../config";
 
 export const getTags = async () => {
-    return await axios.get(`http://167.172.148.55:3000/api/tags`)
+    return await axios.get(`${config.api_host}/api/tags`)
 }
