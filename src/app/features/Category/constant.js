@@ -1,0 +1,3 @@
+export const START_FETCHING_CATEGORY = 'features/Category/START_FETCHING_CATEGORY';
+export const ERROR_FETCHING_CATEGORY = 'features/Category/ERROR_FETCHING_CATEGORY';
+export const SUCCESS_FETCHING_CATEGORY = 'features/Category/SUCCESS_FETCHING_CATEGORY';
