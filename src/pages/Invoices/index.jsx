@@ -1,4 +1,42 @@
+import { useState } from "react";
+import { useEffect } from "react";
+import { useParams } from "react-router";
+import { PuffLoader } from "react-spinners";
+import { getInvoiceByOrderId } from "../../app/api/invoice";
+import { formatRupiah, useDocumentTitle } from "../../app/utils";
+import { config } from "../../config";
+
 const Invoices = () => {
+    useDocumentTitle('Invoice');
+    
+    const [invoice, setInvoice] = useState({});
+    const [error, setError] = useState('');
+    const [status, setStatus] = useState('process');
+    const { order_id } = useParams();
+
+    useEffect(() => {
+        getInvoiceByOrderId(order_id)
+            .then(({ data }) => {
+                if (data.error) {
+                    setError(data.message);
+                }
+
+                setInvoice(data);
+            })
+            .catch(err => setError(err.message))
+            .finally(_ => setStatus('success'));
+    }, [order_id]);
+
+    console.log(invoice);
+
+    if (status === 'process') return (
+        <div className="row justify-content-center">
+            <div className="col-4">
+                <PuffLoader size={100} color="#0d6efd" cssOverride={{ display: 'table', margin: '0 auto' }} speedMultiplier={3} />
+            </div>
+        </div>
+    );
+
     return (
         <div className="card">
             <div className="card-header">
@@ -15,32 +53,33 @@ const Invoices = () => {
                     <tbody>
                         <tr>
                             <td>Status</td>
-                            <td>waiting payment</td>
+                            <td>{invoice.payment_status}</td>
                         </tr>
                         <tr>
                             <td>Order ID</td>
-                            <td>#1</td>
+                            <td>{invoice?.order?.order_number}</td>
                         </tr>
                         <tr>
                             <td>Total Amount</td>
-                            <td>Rp 84.000</td>
+                            <td>{formatRupiah(invoice?.total)}</td>
                         </tr>
                         <tr>
                             <td>Billed to</td>
                             <td>
-                                <b>ALYAD ULYA IMAN</b>
-                                <p>alyadulya@gmail.com</p>
+                                <b>{invoice?.user?.full_name}</b>
+                                <p>{invoice?.user?.email}</p>
 
-                                <p>Kubang Panjang, IV Koto Pulau Punjung, Pulau Punjung, Dharmasraya, Sumatera Barat</p>
+                                <p>{invoice?.delivery_address?.nama}</p>
+                                <p>{invoice?.delivery_address?.detail}, {invoice?.delivery_address?.kelurahan}, {invoice?.delivery_address?.kecamatan}, {invoice?.delivery_address?.kabupaten}, {invoice?.delivery_address?.provinsi}</p>
                             </td>
                         </tr>
                         <tr>
                             <td>Payment to</td>
                             <td>
-                                Edi Hartono<br />
-                                edyh221@gmail.com<br />
-                                BCA<br />
-                                xxxxx-xxxxxx-333-34<br />
+                                {config.owner}<br />
+                                {config.contact}<br />
+                                {config.billing.bank_name}<br />
+                                {config.billing.account_no}<br />
                             </td>
                         </tr>
                     </tbody>

@@ -1,12 +1,9 @@
 import { FaTag } from "react-icons/fa";
-import { useDispatch } from "react-redux";
-import { setTags } from "../../app/features/Product/action";
 import './index.css';
 
-const Tag = ({ name }) => {
-    const dispatch = useDispatch();
+const Tag = ({ name, isActive = true, onClick }) => {
     return(
-        <button className="btn btn-secondary rounded-5 tag" data-bs-toggle="button" onClick={() => dispatch(setTags(name))}>
+        <button className={ !isActive ? "btn btn-secondary rounded-5 tag" : "btn btn-primary rounded-5 tag"} data-bs-toggle="button" onClick={onClick}>
             <FaTag /> {name}
         </button>
     )
